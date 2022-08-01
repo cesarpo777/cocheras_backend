@@ -24,7 +24,7 @@ class Server{
         this.routes()
         
         this.corsOptions = {
-            origin: 'https://parking-now.herokuapp.com',
+            origin: '*',
             optionsSuccessStatus: 200 
         }
     }
