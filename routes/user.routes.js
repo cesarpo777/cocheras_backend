@@ -21,7 +21,9 @@ const {
     borrarUsuario, 
     obtenerUsuario, 
     editarUsuario, 
-    cargarImgUser } = require('../controllers/user.controller');
+    cargarImgUser, 
+    getUserImage,
+    deleteUserImage} = require('../controllers/user.controller');
 
 const router = Router();
 
@@ -36,6 +38,13 @@ router.post('/imagen',
   verifyFileFormat
 ] ,cargarImgUser)
 
+// OBTENER IMAGEN DE USUARIO
+
+router.get('/imagen', validarJWT ,getUserImage)
+
+// ELIMINAR FOTO DE PERFIL
+
+router.delete('/imagen', validarJWT, deleteUserImage)
 
 // OBTENER USUARIOS DE FORMA PAGINADA
 
@@ -53,7 +62,7 @@ router.get('/:id',
         validarJWT,
         esAdminRol,
         check('id', 'No es un id válido').isMongoId(),
-        check('id').custom( existeUserConId ),
+        check('id').custom( existeUserConId ), //is this really necessary ? validar jwt already checks for an existing user
         validarCampos
      ]   
 

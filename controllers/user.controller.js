@@ -1,12 +1,11 @@
 const bcryptjs = require('bcryptjs');
 
 const { generarJWT } = require('../helpers/generar-jwt');
-const { esElMismo } = require('../helpers/chequeoUsuario');
-const User = require('../models/user');
-const { uploadImg } = require('../helpers/uploadImgToCloudinary');
 
-const cloudinary = require('cloudinary').v2;
-cloudinary.config( process.env.CLOUDINARY_URL );
+const User = require('../models/user');
+const { uploadImg, destroyImage } = require('../services/cloudinary');
+
+
 
 
 const obtenerUsuarios = async( req, res ) => {
@@ -154,11 +153,62 @@ const cargarImgUser = async( req, res ) => {
     
 }
 
+const getUserImage = async ( req, res ) => {
+
+    const {_id: userId } = req.usuario;
+
+    try {
+        const user = await User.findById(userId)
+        
+        if(!user.img ){
+            return res.status(404).send({
+                msg:`${user.nombre} aun no ha cargado una foto de perfil`
+            })
+        }
+
+        
+        res.status(200).json({
+            img: user.img
+        })
+    } catch (error) {
+        console.log( error )
+        res.status(500).send({
+            msg: 'Something went wrong call the admin'
+        })
+    } 
+}
+
+const deleteUserImage = async ( req, res ) =>{
+
+    const {img, _id: userId} = req.usuario;
+
+    try {
+        const {result} = await destroyImage( img, userId )
+        console.log( result )
+        if( result === 'ok'){
+            const user = await User.findOneAndUpdate({_id: userId , estado: true }, { img:""}, { new: true })
+            res.status(200).send({
+                msg: 'Image has been succesfully deleted',
+                img: user.img
+            })
+        }
+        
+    } catch (error) {
+        console.log( error )
+        return res.status(500).send({
+            msg: 'Something went wrong call the admin'
+        })
+    }
+  
+}
+
 module.exports = {
     crearUsuario,
     obtenerUsuarios,
     borrarUsuario,
     obtenerUsuario,
     editarUsuario,
-    cargarImgUser
+    cargarImgUser,
+    getUserImage,
+    deleteUserImage
 }
