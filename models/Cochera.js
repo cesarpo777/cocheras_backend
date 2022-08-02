@@ -170,7 +170,7 @@ const cocheraSchema = Schema({
         default: '22:00',
         match:[/((?:(?:0|1)\d|2[0-3])):([0-5]\d)/g, 'La hora debe tener un formato valido']
     }, 
-    imgs:[{ url: String }],
+    imgs:[],
     qtyLugares: { 
         type: Number, 
         default: 1 
