@@ -22,13 +22,14 @@ const multerForCocheras = () => {
     const storage = multer.diskStorage({
         destination: path.join(__dirname , '../uploads/cocheras'),
         filename:( req, file, cb, filename ) => {
-            console.log( req.baseUrl )
+            
             cb(null, uuidv4() + path.extname(file.originalname) )
         }
     })
 
     const upload = multer({storage}).array('cochera', 5)
-    return upload 
+    return upload
+    
 }
     
   
