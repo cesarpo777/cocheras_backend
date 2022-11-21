@@ -4,7 +4,7 @@ const Cochera = require('../models/Cochera');
 const { esElMismo } = require('../helpers/chequeoUsuario');
 
 const obtenerCocheras = async ( req, res ) => {
-
+    console.log('test :D')
     const { limite = 5, desde = 0 } = req.query;
 
     let query = { 
