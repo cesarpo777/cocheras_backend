@@ -10,11 +10,41 @@ const {
 const {
   validarCampos,
   validarJWT,
-  esAdminRol
+  esAdminRol,
+  verifyFile,
+  verifyFileFormat,
+  uploadImageToServer
 } = require('../middlewares')
-const { crearUsuario, obtenerUsuarios, borrarUsuario, obtenerUsuario, editarUsuario } = require('../controllers/user');
+const { 
+    crearUsuario, 
+    obtenerUsuarios, 
+    borrarUsuario, 
+    obtenerUsuario, 
+    editarUsuario, 
+    cargarImgUser, 
+    getUserImage,
+    deleteUserImage} = require('../controllers/user.controller');
+
 const router = Router();
 
+
+// CARGAR FOTO PERFIL
+
+router.post('/imagen',
+[
+  validarJWT,
+  uploadImageToServer(),
+  verifyFile,
+  verifyFileFormat
+] ,cargarImgUser)
+
+// OBTENER IMAGEN DE USUARIO
+
+router.get('/imagen', validarJWT ,getUserImage)
+
+// ELIMINAR FOTO DE PERFIL
+
+router.delete('/imagen', validarJWT, deleteUserImage)
 
 // OBTENER USUARIOS DE FORMA PAGINADA
 
@@ -32,7 +62,7 @@ router.get('/:id',
         validarJWT,
         esAdminRol,
         check('id', 'No es un id válido').isMongoId(),
-        check('id').custom( existeUserConId ),
+        check('id').custom( existeUserConId ), //is this really necessary ? validar jwt already checks for an existing user
         validarCampos
      ]   
 
@@ -53,6 +83,8 @@ router.post('/registro',
     validarCampos   
   ]
 ,crearUsuario )
+
+
 
 // EDITAR USUARIO
 

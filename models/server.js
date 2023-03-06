@@ -1,6 +1,6 @@
 const express = require('express');
+const path = require ('path');
 require('dotenv').config();
-const fileUpload = require('express-fileupload')
 const cors = require('cors');
 const dbConnection = require('../db/config');
 
@@ -38,27 +38,23 @@ class Server{
         // cors
         this.app.use( cors(this.corsOptions))
         
+        this.app.use(express.urlencoded({extended: false}));
+
+        this.app.use( express.static('public'));
+
         // lectura y parseo del body
         this.app.use( express.json() )
-        
-        this.app.use(fileUpload({
-            useTempFiles : true,
-            tempFileDir : '/tmp/',
-            createParentPath: true
-        }));
-        
-        // servir carpeta pública , construir path
-
-        /* this.app.use( express.static('public')) */
     }
 
     routes(){
-
-        this.app.use( this.paths.auth, require('../routes/auth') )
-        this.app.use( this.paths.user, require('../routes/user') )
-        this.app.use( this.paths.cocheras, require('../routes/cocheras') )
+        this.app.get('/', ( req, res ) => {
+            res.sendFile('index.html', path.resolve(__dirname, 'public', 'index.html'))
+        })
+        this.app.use( this.paths.auth, require('../routes/auth.routes') )
+        this.app.use( this.paths.user, require('../routes/user.routes') )
+        this.app.use( this.paths.cocheras, require('../routes/cocheras.routes') )
         this.app.use( this.paths.uploads, require('../routes/uploads') )
-        this.app.use( this.paths.vehiculos, require('../routes/vehiculos') )
+        this.app.use( this.paths.vehiculos, require('../routes/vehiculos.routes') )
     }
 
     listen(){
