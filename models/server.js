@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require ('path');
 require('dotenv').config();
 const cors = require('cors');
 const dbConnection = require('../db/config');
@@ -39,15 +40,16 @@ class Server{
         
         this.app.use(express.urlencoded({extended: false}));
 
+        this.app.use( express.static('public'));
+
         // lectura y parseo del body
         this.app.use( express.json() )
-
-
-        /* this.app.use( express.static('public')) */
     }
 
     routes(){
-
+        this.app.get('/', ( req, res ) => {
+            res.sendFile('index.html', path.resolve(__dirname, 'public', 'index.html'))
+        })
         this.app.use( this.paths.auth, require('../routes/auth.routes') )
         this.app.use( this.paths.user, require('../routes/user.routes') )
         this.app.use( this.paths.cocheras, require('../routes/cocheras.routes') )
